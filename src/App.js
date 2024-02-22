@@ -41,6 +41,7 @@ import DoctorLogin from "./pages/doctor/doctorLogin";
 import DoctorDashboard from "./pages/doctor/doctorDashboard";
 import About from "./pages/footer/about";
 import ContactUs from "./pages/footer/contactus";
+import RescheduleDoctorApp from "./pages/userAppointment/rescheduleDrAppointment";
 function App() {
   console.log(sessionStorage.getItem("loginID"));
   return (
@@ -327,6 +328,14 @@ function App() {
             element={
               <>
                 <ContactUs></ContactUs>
+              </>
+            }
+          ></Route>
+          <Route
+            path="/rescheduleconsult/:caid"
+            element={
+              <>
+                <RescheduleDoctorApp></RescheduleDoctorApp>
               </>
             }
           ></Route>

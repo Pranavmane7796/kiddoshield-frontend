@@ -153,7 +153,7 @@ export default function HosspitalDashboard() {
               />
               <hr></hr>
               <h5 className="card-title">All Children</h5>
-              <p className="card-text">All childrens information and history</p>
+              <p className="card-text">All children information and history</p>
               <Link
                 id="dashboard-button"
                 to="/childrenInfo"

@@ -132,8 +132,8 @@ export default function Home() {
           <img
             style={{ marginTop: "10%" }}
             ref={(img) => lazyImagesRef.current.push(img)}
-            src="images/diseaseImg.png"
-            data-src="images/diseaseImg.png"
+            src="images/diseaseimg.png"
+            data-src="images/diseaseimg.png"
             alt="kid"
             className="features__img lazy-img"
           />

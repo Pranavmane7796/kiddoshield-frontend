@@ -4,12 +4,12 @@ import "../../styles/childHistory.css";
 import hospitalService from "../../service/hospitalService";
 import swal from "sweetalert";
 import { Link } from "react-router-dom";
-
+import emailjs from "@emailjs/browser";
 export default function HospitalAllAppointment() {
   const [plist, setplist] = useState([]);
-
-  let date = new Date();
-  let getDay = date.getDate();
+  const [reminder, setReminder] = useState();
+  const form = useRef();
+  let currentDate = new Date();
   //-----------------------------------------------------
   const fetchdata = () => {
     hospitalService
@@ -21,9 +21,57 @@ export default function HospitalAllAppointment() {
         swal("something went wrong");
       });
   };
+
+  // const sendReminder = () => {
+
+  // };
+
   useEffect(() => {
     fetchdata();
+    // sendReminder();
   }, []);
+
+  const reminderHandler = () => {
+    console.log("clickedd");
+    hospitalService
+      .getAppointment()
+      .then((result) => {
+        const list = result.data;
+        list.forEach((element) => {
+          const appDate = element.date;
+          const convertAppDate = new Date(appDate);
+          const timediference = convertAppDate - currentDate;
+          let hoursDifference = (timediference / (1000 * 60 * 60)).toFixed(1);
+          console.log(hoursDifference);
+          if (hoursDifference <= "40.0") {
+            console.log(result);
+            const temlateParam = {
+              to_email: element.email,
+              message: `reminder!!!!!! your appointment for ${element.vname} is scheduled on ${element.date}`,
+              from_name: "kiddoShield",
+            };
+            emailjs
+              .send(
+                "service_ayycpun",
+                "template_w3inmv5",
+                temlateParam,
+                "w-hlJ1RqHPuR_Pq3A"
+              )
+              .then(
+                () => {
+                  console.log("SUCCESS!");
+                },
+                (error) => {
+                  console.log("FAILED...", error.text);
+                }
+              );
+          }
+        });
+      })
+      .catch((error) => {
+        swal("something went wrong");
+      });
+  };
 
   //----------------------------------------------------
   return (
@@ -37,7 +85,11 @@ export default function HospitalAllAppointment() {
           <h5> back</h5>
         </Link>
         <h2 className="navbar-heading">All Appointment</h2>
+        <button className="btn btn-success" onClick={reminderHandler}>
+          Send Reminder
+        </button>
       </nav>
+
       <div className="tbl-container-outer">
         <div className="tbl-container-inner">
           <table
@@ -68,11 +120,6 @@ export default function HospitalAllAppointment() {
                   <td>{ob.time}</td>
                   <td>{ob.contact}</td>
                   <td>{ob.vname}</td>
-                  {/* <td>
-                    <button className="btn btn-outline-info" id="username">
-                      Click Here
-                    </button>
-                  </td> */}
                 </tr>
               ))}
             </tbody>

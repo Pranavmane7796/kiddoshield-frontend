@@ -53,8 +53,20 @@ class UserService {
   consultDoctor(uid, obj) {
     return axios.post(baseUrl + `consultappointment/${uid}`, obj);
   }
-  getDrConsultApp(uid) {
-    return axios.get(baseUrl + `consultappointments/${uid}`);
+  RescheduledoctorAppointment(uid, obj) {
+    return axios.put(baseUrl + `rescheduleconsultappointment/${uid}`, obj);
+  }
+  //get doctor appointment
+  getDrConsultApp(caid) {
+    return axios.get(baseUrl + `consultappointments/${caid}`);
+  }
+  //cancel doctor app
+  cancelDrConsultApp(caid) {
+    return axios.delete(baseUrl + `consultappointment/${caid}`);
+  }
+  //cancel vaccine app
+  cancelVaccineApp(aid) {
+    return axios.delete(baseUrl + `appointment/${aid}`);
   }
   forgotUserPassword(forgetUserPword) {
     return axios.post(baseUrl + "forgotpassword", forgetUserPword);

@@ -102,16 +102,42 @@ export default function ChildDashboard() {
       // get vaccine appointment
       const res = await userService.ShowVaccineAppointment(userInfo.uid);
       const response = await userService.getDrConsultApp(userInfo.uid); //get doctor consult
+      console.log(response);
       //------------------------------------
+      //dr consult
       if (response.data.length > 0) {
         const drconsult = response.data;
         const info = drconsult?.map((data, index) => {
+          console.log(data);
           return (
             <div key={index}>
               <p>
                 You have an appointment on {data.date} at {data.time}, children
                 Id {data.cid}
               </p>
+              <button
+                onClick={() => {
+                  navigate(`/rescheduleconsult/${data.caid}`, {
+                    state: { childdata: data },
+                  });
+                  window.location.reload();
+                }}
+                className="btn btn-dark btn-small"
+              >
+                Reschedule
+              </button>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <button
+                onClick={() => {
+                  userService.cancelDrConsultApp(data.caid).then((res) => {
+                    swal("Done");
+                  });
+                  window.location.reload();
+                }}
+                className="btn btn-danger btn-small"
+              >
+                Cancel
+              </button>
             </div>
           );
         });
@@ -139,6 +165,18 @@ export default function ChildDashboard() {
                 className="btn btn-dark btn-small"
               >
                 Reschedule
+              </button>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <button
+                onClick={() => {
+                  userService.cancelVaccineApp(data.aid).then((res) => {
+                    swal("Done");
+                  });
+                  window.location.reload();
+                }}
+                className="btn btn-danger btn-small"
+              >
+                Cancel
               </button>
             </div>
           );

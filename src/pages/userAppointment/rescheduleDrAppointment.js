@@ -8,37 +8,40 @@ import "../../styles/scheduleVaccination.css";
 import { useEffect, useState } from "react";
 import swal from "sweetalert";
 import userService from "../../service/userService";
-export default function RescheduleVaccination() {
-  const [hasMounted, setHasMounted] = useState(false);
-
+import hospitalService from "../../service/hospitalService";
+export default function RescheduleDoctorApp() {
   const navigate = useNavigate();
   const location = useLocation();
   const { childdata } = location.state;
-  const { aid } = useParams();
+  const [availableDoctors, setAvailableDoctors] = useState([]);
+  const [drId, setDrId] = useState();
+  console.log(childdata);
+  const { caid } = useParams();
   const [formdetails, setFormDetails] = useState({
     cid: childdata.cid,
     email: childdata.email,
     date: "",
     time: "",
     contact: childdata.contact,
-    vname: childdata.vname,
+    specialization: childdata.specialization,
+    did: "",
   });
-  console.log(formdetails);
   const submitData = async () => {
+    console.log(formdetails);
+    const did = document.getElementById("did").value;
+    formdetails.did = did;
     if (
       formdetails.cid === "" ||
       formdetails.date === "" ||
       formdetails.time === "" ||
-      formdetails.contact === "" ||
-      formdetails.vname === null ||
-      ""
+      formdetails.contact === ""
     ) {
       swal("Please fill all the fields");
     } else {
       try {
         console.log(formdetails);
-        const response = await userService.RescheduleVaccineAppointment(
-          aid,
+        const response = await userService.RescheduledoctorAppointment(
+          caid,
           formdetails
         );
         console.log(response);
@@ -57,6 +60,20 @@ export default function RescheduleVaccination() {
       }
     }
   };
+  const [list, setplist] = useState();
+  useEffect(() => {
+    hospitalService.getDoctor().then((res) => {
+      setplist(res.data);
+    });
+  }, []);
+  useEffect(() => {
+    if (list?.length >= 0) {
+      const specializationData = list.filter(
+        (item) => item.specialization === childdata.specialization
+      );
+      setAvailableDoctors(specializationData);
+    }
+  }, [list]);
   return (
     <>
       <nav
@@ -150,27 +167,33 @@ export default function RescheduleVaccination() {
             value={childdata?.contact}
           />
           <br></br>
-          <label>Select Vaccination</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <label>Select Specialization</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <select
             readOnly
-            value={childdata.vname}
+            value={childdata.specialization}
+            // }}
             className="btn btn-secondary "
           >
-            <option>Select</option>
-            <option value={"update"}> DTap</option>
-            <option value={"delete"}>Hib</option>
-            <option value={"feedback"}>Hipatitis B</option>
-            <option value={"Polio"}>Polio</option>
-            <option value={"Rotavirus"}>Rotavirus</option>
-            <option value={"Influenza"}>Influenza</option>
-            <option value={"Chicken Pox"}>Chicken Pox</option>
-            <option value={"Hipatitis A"}>Hipatitis A</option>
-            <option value={"MMR"}>MMR</option>
-            <option value={"HPV"}>HPV</option>
-            <option value={"PCV"}>PCV</option>
-            <option value={"Meningococcal"}>Meningococcal</option>
-            <option value={"other"}>other</option>
+            <option>{childdata.specialization}</option>
           </select>
+          {
+            <div>
+              <label>Select Doctor</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <select
+                id="did"
+                onChange={(e) => setDrId(e.target.value)}
+                name="Doctor"
+                style={{ fontSize: "20px", borderRadius: "10px" }}
+              >
+                <option value="">Select Doctor</option>
+                {availableDoctors?.map((doctor, index) => (
+                  <option id={doctor.did} key={doctor.did} value={doctor.did}>
+                    {doctor.dfname + " " + doctor.dlname}
+                  </option>
+                ))}
+              </select>
+            </div>
+          }
         </div>
 
         <div class="container">
